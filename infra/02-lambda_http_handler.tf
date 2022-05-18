@@ -1,4 +1,26 @@
-#region IAM Policy
+#region IAM for Lambda
+
+resource "aws_iam_role_policy" "lambda_policy" {
+  name = "${var.app_name}.${var.environment_name}.lambda-policy"
+
+  role = aws_iam_role.lambda_exec.id
+
+  policy = jsonencode({
+    Version   = "2012-10-17",
+    Statement = [
+      {
+        Sid      = "Stmt1652579297004"
+        Action   = [
+          "dynamodb:Query",
+          "dynamodb:GetItem",
+        ],
+        Effect   = "Allow",
+        Resource = aws_dynamodb_table.primary_table.arn
+      }
+    ]
+  })
+}
+
 
 resource "aws_iam_role" "lambda_exec" {
   name = "${var.app_name}.${var.environment_name}.lambda-role"
@@ -23,49 +45,6 @@ resource "aws_iam_role_policy_attachment" "lambda_policy" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
-#resource "aws_iam_role_policy" "lambda_policy" {
-#  name = "${var.app_name}.${var.environment_name}.lambda-policy"
-#
-#  role = aws_iam_role.lambda_exec.id
-#
-#  policy = jsonencode({
-#    Version   = "2012-10-17",
-#    Statement = [
-#      {
-#        Sid      = "Stmt1652579297004"
-#        Action   = [
-#          "dynamodb:Query",
-#          "dynamodb:GetItem",
-#        ],
-#        Effect   = "Allow",
-#        Resource = aws_dynamodb_table.primary_table.arn
-#      }
-#    ]
-#  })
-#}
-
-
-#
-#data "aws_iam_policy_document" "http_handler" {
-#  version = "2012-10-17"
-#
-#  statement {
-#    actions = [
-#      "dynamodb:Query",
-#      "dynamodb:GetItem",
-#    ]
-#
-#    effect = "Allow",
-#
-#    resource = aws_dynamodb_table.primary_table.arn
-#
-#  }
-#}
-#
-#resource "aws_iam_role" "http_handler" {
-#  assume_role_policy = ""
-#}
-#
 #endregion
 
 #region Lambda Function
@@ -87,17 +66,11 @@ resource "aws_lambda_function" "http_handler" {
 
   runtime = "dotnet6"
 
-#  environment {
-#    variables = {
-#      DYNAMO_TABLE_NAME = aws_dynamodb_table.primary_table.name
-#    }
-#  }
+  environment {
+    variables = {
+      PRIMARY_DYNAMO_TABLE_NAME = aws_dynamodb_table.primary_table.name
+    }
+  }
 }
 
-#
-#resource "aws_lambda_function" "http_handler" {
-#  function_name = ""
-#  role          = aws_iam_role.http_handler.arn
-#}
-#
 #endregion
