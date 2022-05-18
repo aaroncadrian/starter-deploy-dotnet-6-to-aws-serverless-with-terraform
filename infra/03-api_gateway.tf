@@ -39,7 +39,7 @@ resource "aws_cloudwatch_log_group" "http_api" {
 
 #region API Gateway Route/Integration
 
-resource "aws_apigatewayv2_integration" "svc_function" {
+resource "aws_apigatewayv2_integration" "http_proxy" {
   api_id = aws_apigatewayv2_api.http_api.id
 
   integration_uri    = aws_lambda_function.http_handler.invoke_arn
@@ -48,21 +48,21 @@ resource "aws_apigatewayv2_integration" "svc_function" {
   payload_format_version = "2.0"
 }
 
-resource "aws_apigatewayv2_route" "svc_function" {
+resource "aws_apigatewayv2_route" "proxy" {
   api_id = aws_apigatewayv2_api.http_api.id
 
   route_key = "ANY /{proxy+}"
-  target    = "integrations/${aws_apigatewayv2_integration.svc_function.id}"
+  target    = "integrations/${aws_apigatewayv2_integration.http_proxy.id}"
 }
 
-resource "aws_apigatewayv2_route" "base_route" {
+resource "aws_apigatewayv2_route" "root" {
   api_id = aws_apigatewayv2_api.http_api.id
 
   route_key = "ANY /"
-  target    = "integrations/${aws_apigatewayv2_integration.svc_function.id}"
+  target    = "integrations/${aws_apigatewayv2_integration.http_proxy.id}"
 }
 
-resource "aws_lambda_permission" "api_gw_svc_function" {
+resource "aws_lambda_permission" "invoke_from_api_gw" {
   statement_id  = "AllowExecutionFromAPIGateway"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.http_handler.function_name
