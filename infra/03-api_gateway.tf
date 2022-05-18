@@ -55,6 +55,13 @@ resource "aws_apigatewayv2_route" "svc_function" {
   target    = "integrations/${aws_apigatewayv2_integration.svc_function.id}"
 }
 
+resource "aws_apigatewayv2_route" "base_route" {
+  api_id = aws_apigatewayv2_api.http_api.id
+
+  route_key = "ANY /"
+  target    = "integrations/${aws_apigatewayv2_integration.svc_function.id}"
+}
+
 resource "aws_lambda_permission" "api_gw_svc_function" {
   statement_id  = "AllowExecutionFromAPIGateway"
   action        = "lambda:InvokeFunction"
