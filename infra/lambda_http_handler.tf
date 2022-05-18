@@ -76,7 +76,7 @@ data "archive_file" "http_handler" {
   type        = "zip"
 }
 
-resource "aws_lambda_function" "svc_function" {
+resource "aws_lambda_function" "http_handler" {
   function_name = "${var.app_name}_${var.environment_name}"
 
   handler          = "WebApplication1"
