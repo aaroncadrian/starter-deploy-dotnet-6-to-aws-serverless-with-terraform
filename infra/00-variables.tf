@@ -12,3 +12,8 @@ variable "environment_name" {
   type    = string
   default = "poc"
 }
+
+variable "project_name" {
+  type    = string
+  default = "WebApplication1"
+}
