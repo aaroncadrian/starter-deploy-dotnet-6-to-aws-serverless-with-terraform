@@ -79,7 +79,7 @@ data "archive_file" "http_handler" {
 resource "aws_lambda_function" "svc_function" {
   function_name = "${var.app_name}_${var.environment_name}"
 
-  handler          = "main.handler"
+  handler          = "WebApplication1"
   filename         = data.archive_file.http_handler.output_path
   source_code_hash = data.archive_file.http_handler.output_base64sha256
 
