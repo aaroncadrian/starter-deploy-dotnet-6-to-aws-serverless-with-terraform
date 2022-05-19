@@ -4,16 +4,18 @@ variable "aws_region" {
 }
 
 variable "app_name" {
-  type    = string
-  default = "z-aaron-weather-forecast"
+  type        = string
+  description = "The name of your application"
+  default     = "weather-forecast"
 }
 
 variable "environment_name" {
-  type    = string
-  default = "poc"
+  type        = string
+  description = "The name of your deployment environment, such as `dev` or `prod`"
+  default     = "poc"
 }
 
-variable "project_name" {
+variable "dotnet_project_name" {
   type    = string
   default = "WebApplication1"
 }

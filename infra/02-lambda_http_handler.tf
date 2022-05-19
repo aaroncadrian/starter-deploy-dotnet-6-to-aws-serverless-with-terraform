@@ -51,14 +51,14 @@ resource "aws_iam_role_policy_attachment" "lambda_policy" {
 
 data "archive_file" "http_handler" {
   output_path = "${path.module}/http_handler.zip"
-  source_dir  = "${path.module}/../${var.project_name}/bin/Debug/net6.0"
+  source_dir  = "${path.module}/../${var.dotnet_project_name}/bin/Debug/net6.0"
   type        = "zip"
 }
 
 resource "aws_lambda_function" "http_handler" {
   function_name = "${var.app_name}_${var.environment_name}"
 
-  handler          = var.project_name
+  handler          = var.dotnet_project_name
   filename         = data.archive_file.http_handler.output_path
   source_code_hash = data.archive_file.http_handler.output_base64sha256
 
