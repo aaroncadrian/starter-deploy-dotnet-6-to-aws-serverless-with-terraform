@@ -12,3 +12,5 @@
 
 # Archive Files
 *.zip
+
+.DS_Store
