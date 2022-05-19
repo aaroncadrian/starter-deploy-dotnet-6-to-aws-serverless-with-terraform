@@ -38,10 +38,12 @@ public class PeopleController : ControllerBase
 
         var result = await _dynamoDb.QueryAsync(queryRequest, cancellationToken);
 
+        var items = result.Items;
+
         return Ok(new
         {
             tableName,
-            result
+            items
         });
     }
 }
