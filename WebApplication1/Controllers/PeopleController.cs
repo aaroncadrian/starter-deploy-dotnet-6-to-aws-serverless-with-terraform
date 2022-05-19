@@ -38,7 +38,13 @@ public class PeopleController : ControllerBase
 
         var result = await _dynamoDb.QueryAsync(queryRequest, cancellationToken);
 
-        var items = result.Items;
+        var items = result.Items.Select(item => new
+        {
+            pk = item.GetValueOrDefault("pk")?.S,
+            sk = item.GetValueOrDefault("sk")?.S,
+            firstName = item.GetValueOrDefault("firstName")?.S,
+            lastName = item.GetValueOrDefault("lastName")?.S
+        });
 
         return Ok(new
         {
