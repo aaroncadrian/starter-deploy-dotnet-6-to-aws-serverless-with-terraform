@@ -1,5 +1,5 @@
 using Amazon.DynamoDBv2;
-using Amazon.DynamoDBv2.DocumentModel;
+using Amazon.DynamoDBv2.Model;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApplication1.Controllers;
@@ -12,26 +12,36 @@ public class PeopleController : ControllerBase
 
     private readonly IConfiguration _configuration;
 
-    public PeopleController(IAmazonDynamoDB dynamoDb, IConfiguration configuration)
+    public PeopleController(IConfiguration configuration, IAmazonDynamoDB dynamoDb)
     {
-        _dynamoDb = dynamoDb;
         _configuration = configuration;
+        _dynamoDb = dynamoDb;
     }
 
     [HttpGet]
     public async Task<IActionResult> GetPeople(CancellationToken cancellationToken)
     {
         var tableName = _configuration.GetValue<string>("PRIMARY_DYNAMO_TABLE_NAME");
-        
-        var table = Table.LoadTable(_dynamoDb, tableName);
 
-        var scan = table.Scan(new ScanOperationConfig());
+        var queryRequest = new QueryRequest(tableName)
+        {
+            KeyConditionExpression = "#pk = :pk",
+            ExpressionAttributeNames = new Dictionary<string, string>
+            {
+                {"#pk", "pk"}
+            },
+            ExpressionAttributeValues = new Dictionary<string, AttributeValue>
+            {
+                {":pk", new AttributeValue("PEOPLE")}
+            }
+        };
 
-        var result = await scan.GetNextSetAsync(cancellationToken);
+        var result = await _dynamoDb.QueryAsync(queryRequest, cancellationToken);
 
         return Ok(new
         {
-            Items = result
+            tableName,
+            result
         });
     }
 }
