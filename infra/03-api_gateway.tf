@@ -42,7 +42,7 @@ resource "aws_cloudwatch_log_group" "http_api" {
 resource "aws_apigatewayv2_integration" "http_proxy" {
   api_id = aws_apigatewayv2_api.http_api.id
 
-  integration_uri        = aws_lambda_function.http_handler.invoke_arn
+  integration_uri        = module.lambda_http_handler.invoke_arn
   integration_type       = "AWS_PROXY"
   integration_method     = "POST"
   payload_format_version = "2.0"
@@ -63,10 +63,13 @@ resource "aws_apigatewayv2_route" "root" {
 }
 
 resource "aws_lambda_permission" "invoke_from_api_gw" {
-  statement_id  = "AllowExecutionFromAPIGateway"
-  action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.http_handler.function_name
-  principal     = "apigateway.amazonaws.com"
+  statement_id = "AllowExecutionFromAPIGateway"
+  action       = "lambda:InvokeFunction"
+  #  function_name = aws_lambda_function.http_handler.function_name
+
+  function_name = module.lambda_http_handler.function_name
+
+  principal = "apigateway.amazonaws.com"
 
   source_arn = "${aws_apigatewayv2_api.http_api.execution_arn}/*/*"
 }
