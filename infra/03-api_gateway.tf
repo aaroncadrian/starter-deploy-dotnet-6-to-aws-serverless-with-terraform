@@ -42,9 +42,9 @@ resource "aws_cloudwatch_log_group" "http_api" {
 resource "aws_apigatewayv2_integration" "http_proxy" {
   api_id = aws_apigatewayv2_api.http_api.id
 
-  integration_uri    = aws_lambda_function.http_handler.invoke_arn
-  integration_type   = "AWS_PROXY"
-  integration_method = "POST"
+  integration_uri        = aws_lambda_function.http_handler.invoke_arn
+  integration_type       = "AWS_PROXY"
+  integration_method     = "POST"
   payload_format_version = "2.0"
 }
 
