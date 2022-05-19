@@ -64,6 +64,8 @@ resource "aws_lambda_function" "http_handler" {
 
   role = aws_iam_role.lambda_exec.arn
 
+  timeout = 10
+
   runtime = "dotnet6"
 
   environment {
